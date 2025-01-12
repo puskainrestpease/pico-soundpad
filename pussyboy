@@ -1,0 +1,25 @@
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val saveSoundButton: Button = findViewById(R.id.button_save_sound)
+        
+        // клик
+        saveSoundButton.setOnClickListener {
+            saveSound("/path/to/sound/file.mp3", "Sound 1")
+        }
+    }
+
+    private fun saveSound(filePath: String, soundName: String) {
+        // логика ебаная не рабочая сука
+        Log.d("SaveSound", "Saving sound: $soundName at $filePath")
+    }
+
+### КНОПКА <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<Button
+    android:id="@+id/button_save_sound"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Save Sound" />
