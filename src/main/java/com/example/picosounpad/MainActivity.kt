@@ -39,27 +39,26 @@ class MainActivity : AppCompatActivity() {
 
         // Перемотка вперед
         findViewById<Button>(R.id.button_forward).setOnClickListener {
-            mediaPlayer?.let { player ->
+            mediaPlayer?.apply {
                 val currentPosition = player.currentPosition
                 val newPosition = currentPosition + 5000 // Перемотка вперед на 5 секунд
-                if (newPosition < player.duration) {
-                    player.seekTo(newPosition)
+                 if (newPosition < duration) {
+                        seekTo(newPosition)
                 } else {
-                    player.seekTo(player.duration)
+                        seekTo(duration)
                 }
             }
         }
 
         // Перемотка назад
         findViewById<Button>(R.id.button_backward).setOnClickListener {
-            mediaPlayer?.let { player ->
-                val currentPosition = player.currentPosition
-                val newPosition = currentPosition - 5000 // Перемотка назад на 5 секунд
-                if (newPosition > 0) {
-                    player.seekTo(newPosition)
-                } else {
-                    player.seekTo(0)
-                }
+        mediaPlayer?.apply {
+            val currentPosition = currentPosition
+            val newPosition = currentPosition - 5000 // Перемотка назад на 5 секунд
+            if (newPosition > 0) {
+                seekTo(newPosition)
+            } else {
+                seekTo(0)
             }
         }
     }
