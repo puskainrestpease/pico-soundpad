@@ -20,6 +20,6 @@
   · Read the USB device (developer on the device).
   · How to install Adb:
   
-    📍 adb set path_to_your_apk
+    📍 adb install path_to_your_apk
 ### 3) Overview:
   😁 After install open app in your device and have fun :)
