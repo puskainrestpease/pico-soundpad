@@ -1,19 +1,14 @@
 package com.example.picosoundpad
 
-import android.media.AudioManager
 import android.media.MediaPlayer
-import android.media.AudioTrack
-import android.media.AudioFormat
 import android.os.Bundle
 import android.widget.Button
-import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileInputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,8 +32,9 @@ class MainActivity : AppCompatActivity() {
             playSound("/path/to/sound/file.mp3")
         }
 
-        findViewById<Button>(R.id.button_play_microphone).setOnClickListener {
-            playSoundThroughMicrophone("/path/to/sound/file.mp3")
+        findViewById<Button>(R.id.button_play_local_sound).setOnClickListener {
+            // Проигрывание локально сохраненного звука
+            playLocalSound("saved_sound.mp3")
         }
 
         // Перемотка вперед
@@ -66,17 +62,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-        // Управление громкостью с помощью SeekBar
-        findViewById<SeekBar>(R.id.seekBar_volume).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                mediaPlayer?.setVolume(progress / 100f, progress / 100f)
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
     }
 
     private fun saveSound(filePath: String, name: String) {
@@ -100,27 +85,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun playSoundThroughMicrophone(filePath: String) {
+    // Локальное прослушивание аудиофайла из хранилища
+    private fun playLocalSound(fileName: String) {
+        val filePath = "${filesDir.absolutePath}/$fileName"
         val file = File(filePath)
+        
         if (file.exists()) {
-            val fileInputStream = FileInputStream(file)
-            val buffer = ByteArray(1024)
-            val audioTrack = AudioTrack(
-                AudioManager.STREAM_MUSIC,
-                44100,
-                AudioFormat.CHANNEL_OUT_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                buffer.size,
-                AudioTrack.MODE_STREAM
-            )
-            audioTrack.play()
-
-            // Чтение файла и передача данных в AudioTrack
-            var bytesRead: Int
-            while (fileInputStream.read(buffer).also { bytesRead = it } != -1) {
-                audioTrack.write(buffer, 0, bytesRead)
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(filePath)
+                prepare()
+                start()
+                setOnCompletionListener {
+                    Toast.makeText(this@MainActivity, "Playback completed", Toast.LENGTH_SHORT).show()
+                }
             }
-            fileInputStream.close()
+        } else {
+            Toast.makeText(this, "File not found", Toast.LENGTH_SHORT).show()
         }
     }
 
