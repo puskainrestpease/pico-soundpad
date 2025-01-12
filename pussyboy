@@ -1,25 +1,66 @@
-class MainActivity : AppCompatActivity() {
+1 кнопка
+findViewById<Button>(R.id.button_save_sound).setOnClickListener {
+    saveSound("/path/to/sound/file.mp3", "Sound 1")
+}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        val saveSoundButton: Button = findViewById(R.id.button_save_sound)
-        
-        // клик
-        saveSoundButton.setOnClickListener {
-            saveSound("/path/to/sound/file.mp3", "Sound 1")
+private fun saveSound(filePath: String, soundName: String) {
+    try {
+        val sourceFile = File(filePath)
+        if (!sourceFile.exists()) {
+            Log.e("SaveSound", "Source file does not exist")
+            return
         }
-    }
+        val destinationFile = File(filesDir, soundName)
+        val inputStream = FileInputStream(sourceFile)
+        val outputStream = FileOutputStream(destinationFile)
+        val buffer = ByteArray(1024)
+        var length: Int
+        while (inputStream.read(buffer).also { length = it } > 0) {
+            outputStream.write(buffer, 0, length)
+        }
 
-    private fun saveSound(filePath: String, soundName: String) {
-        // логика ебаная не рабочая сука
-        Log.d("SaveSound", "Saving sound: $soundName at $filePath")
-    }
+        // Close streams
+        inputStream.close()
+        outputStream.close()
 
-### КНОПКА <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<Button
-    android:id="@+id/button_save_sound"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Save Sound" />
+        Log.d("SaveSound", "Sound saved as: $soundName at ${destinationFile.path}")
+    } catch (e: IOException) {
+        Log.e("SaveSound", "Error saving sound", e)
+    }
+}
+
+
+2 кнопка
+findViewById<Button>(R.id.button_play_sound).setOnClickListener {
+    playSound("/path/to/sound/file.mp3")
+}
+
+private fun playSound(filePath: String) {
+    val mediaPlayer = MediaPlayer()
+    mediaPlayer.setDataSource(filePath)
+    mediaPlayer.prepare()
+    mediaPlayer.start()
+}
+3 кнопка
+findViewById<Button>(R.id.button_play_sound).setOnClickListener {
+    playSound("/path/to/sound/file.mp3")
+}
+
+private fun playSound(filePath: String) {
+    val mediaPlayer = MediaPlayer()
+    mediaPlayer.setDataSource(filePath)
+    mediaPlayer.prepare()
+    mediaPlayer.start()
+}
+4 кнопка
+var isPlaying = false
+val mediaPlayer = MediaPlayer()
+
+findViewById<Button>(R.id.button_player).setOnClickListener {
+    if (isPlaying) {
+        mediaPlayer.pause()
+    } else {
+        mediaPlayer.start()
+    }
+    isPlaying = !isPlaying
+}
