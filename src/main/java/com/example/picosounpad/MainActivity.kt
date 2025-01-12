@@ -52,16 +52,16 @@ class MainActivity : AppCompatActivity() {
 
         // Перемотка назад
         findViewById<Button>(R.id.button_backward).setOnClickListener {
-        mediaPlayer?.apply {
-            val currentPosition = currentPosition
-            val newPosition = currentPosition - 5000 // Перемотка назад на 5 секунд
-            if (newPosition > 0) {
-                seekTo(newPosition)
-            } else {
-                seekTo(0)
+            mediaPlayer?.apply {
+                val currentPosition = currentPosition
+                val newPosition = currentPosition - 5000 // Перемотка назад на 5 секунд
+                if (newPosition > 0) {
+                    seekTo(newPosition)
+                } else {
+                    seekTo(0)
+                }
             }
         }
-    }
 
     private fun saveSound(filePath: String, name: String) {
         lifecycleScope.launch(Dispatchers.IO) {
