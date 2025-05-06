@@ -1,11 +1,13 @@
-package com.example.picosoundpad  
+package com.example.picosounpad  
   
 import android.content.Intent  
 import android.media.MediaPlayer  
 import android.net.Uri  
 import android.os.Bundle  
 import android.provider.OpenableColumns  
+import android.util.Log  
 import android.widget.Button  
+import android.widget.SeekBar  
 import android.widget.Toast  
 import androidx.appcompat.app.AppCompatActivity  
 import androidx.lifecycle.lifecycleScope  
@@ -60,6 +62,19 @@ class MainActivity : AppCompatActivity() {
             playLocalSound("saved_sound.mp3")  
         }  
   
+        // волайм кантрол 
+        findViewById<SeekBar>(R.id.seekBar_volume).setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {  
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {  
+                if (fromUser) {  
+                    val volume = progress / 100f  
+                    mediaPlayer?.setVolume(volume, volume)  
+                }  
+            }  
+  
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}  
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}  
+        })  
+  
         // Перемотка вперед  
         findViewById<Button>(R.id.button_forward).setOnClickListener {  
             mediaPlayer?.apply {  
@@ -91,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)  
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {  
             data?.data?.let { uri ->  
-                val fileName = getFileNameFromUri(uri)   
+                val fileName = getFileNameFromUri(uri)  
                 val internalFilePath = copyFileToInternalStorage(uri, fileName)  
                 if (internalFilePath != null) {  
                     saveSound(internalFilePath, fileName)  
@@ -159,6 +174,7 @@ class MainActivity : AppCompatActivity() {
                 }  
             }  
         } catch (e: IOException) {  
+            Log.e("MainActivity", "Error playing sound", e)  
             Toast.makeText(this, "Error playing sound: ${e.message}", Toast.LENGTH_SHORT).show()  
         }  
     }  
@@ -180,6 +196,7 @@ class MainActivity : AppCompatActivity() {
                     }  
                 }  
             } catch (e: IOException) {  
+                Log.e("MainActivity", "Error playing local sound", e)  
                 Toast.makeText(this, "Error playing sound: ${e.message}", Toast.LENGTH_SHORT).show()  
             }  
         } else {  
